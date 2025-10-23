@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vote Dinner — pick a date</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Vote for Dinner Date</h1>
+
+    <section class="form">
+      <label for="name">Your name</label>
+      <input id="name" placeholder="Alice" />
+
+      <label for="date">Choose a date</label>
+      <input id="date" type="date" />
+
+      <button id="vote">Vote</button>
+    </section>
+
+    <section class="results">
+      <h2>Results</h2>
+      <div id="summary">Loading...</div>
+      <ul id="list"></ul>
+    </section>
+
+    <footer>
+      <p>Data saved to Firebase Firestore. Configure firebaseConfig in <code>app.js</code>.</p>
+    </footer>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
