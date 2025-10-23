@@ -9,6 +9,7 @@ Files
 - index.html — UI
 - style.css — styles
 - app.js — JavaScript logic; paste your Firebase config into the firebaseConfig object
+ - firestore.rules — example Firestore security rules to allow only owners to write their vote
 
 Setup
 
@@ -19,6 +20,8 @@ Setup
 
 2. Add config
    - Open `app.js` and replace the empty `firebaseConfig` with the object you copied from Firebase.
+   - Optional: enable Authentication -> Sign-in method -> Google and configure.
+   - For signed-in users the app will use your UID as the document ID in `votes` to enforce one vote per user.
 
 3. Test locally
    - Serve the folder over HTTP (some browsers block module imports from file://). On Windows PowerShell you can run:
@@ -40,5 +43,10 @@ Notes and Next Steps
 
 - This app uses Firestore in client-side JS. For a small group this is fine, but consider security rules to prevent abuse.
 - Optional improvements: sign-in with Google to avoid name collisions; allow editing/removing votes; add a calendar widget.
+
+Auth and rules
+
+- The app now supports Google Sign-In via Firebase Auth. Click "Sign in with Google" in the app to authenticate. When signed in the app stores your vote in `votes/{uid}` so each user has a single vote that they can change or remove.
+- The included `firestore.rules` file shows a recommended rule set that allows public reads but allows create/update/delete only when `request.auth.uid == docId`. Deploy these rules via the Firebase Console or the Firebase CLI.
 
 License: MIT

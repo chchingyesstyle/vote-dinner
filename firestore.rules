@@ -1,0 +1,16 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Each user's vote document is stored at /votes/{uid} when signed-in.
+    match /votes/{docId} {
+      allow read: if true; // public read
+
+      // Allow create/update/delete only when authenticated and uid matches docId
+      allow create, update, delete: if request.auth != null && request.auth.uid == docId;
+
+      // Fallback: allow writes from unauthenticated clients but limit fields (optional)
+      // To disallow anonymous writes completely, remove the block below.
+      allow create: if request.auth == null && false;
+    }
+  }
+}

@@ -5,19 +5,38 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Vote Dinner — pick a date</title>
   <link rel="stylesheet" href="style.css" />
+  <!-- flatpickr for nicer calendar -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 <body>
   <main class="container">
     <h1>Vote for Dinner Date</h1>
 
+    <section class="auth">
+      <div id="authButtons">
+        <button id="signIn">Sign in with Google</button>
+        <button id="signOut" style="display:none">Sign out</button>
+      </div>
+      <div id="userInfo" style="margin-top:8px;color:var(--muted)"></div>
+    </section>
+
     <section class="form">
-      <label for="name">Your name</label>
+      <label for="name">Your name (optional when signed in)</label>
       <input id="name" placeholder="Alice" />
 
       <label for="date">Choose a date</label>
-      <input id="date" type="date" />
+      <input id="date" type="text" placeholder="Select a date" />
 
       <button id="vote">Vote</button>
+    </section>
+
+    <section class="myvote" id="myvote" style="margin-top:12px;display:none">
+      <h3>Your vote</h3>
+      <div id="myVoteDisplay">None</div>
+      <div style="margin-top:8px">
+        <button id="changeVote" style="display:none">Change vote</button>
+        <button id="removeVote" style="display:none">Remove my vote</button>
+      </div>
     </section>
 
     <section class="results">
