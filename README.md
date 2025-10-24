@@ -47,6 +47,11 @@ Notes and Next Steps
 Auth and rules
 
 - The app now supports Google Sign-In via Firebase Auth. Click "Sign in with Google" in the app to authenticate. When signed in the app stores your vote in `votes/{uid}` so each user has a single vote that they can change or remove.
+- The app supports selecting multiple dates (choose one or more dates in the calendar). Votes for signed-in users are stored as a single document at `votes/{uid}` with a `dates` array, for example:
+
+```json
+{ "uid": "abc123", "name": "Alice", "dates": ["2025-10-24","2025-10-25"], "ts": "..." }
+```
 - The included `firestore.rules` file shows a recommended rule set that allows public reads but allows create/update/delete only when `request.auth.uid == docId`. Deploy these rules via the Firebase Console or the Firebase CLI.
 
 License: MIT

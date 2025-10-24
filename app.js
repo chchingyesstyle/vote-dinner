@@ -38,14 +38,14 @@ const myvoteSection = document.getElementById('myvote');
 const changeVoteBtn = document.getElementById('changeVote');
 const removeVoteBtn = document.getElementById('removeVote');
 
-// init flatpickr
-flatpickr(dateEl, { dateFormat: 'Y-m-d', minDate: 'today' });
+// init flatpickr (multiple-date selection)
+const fp = flatpickr(dateEl, { mode: 'multiple', dateFormat: 'Y-m-d', minDate: 'today' });
 
 voteBtn.addEventListener('click', async () => {
   const name = nameEl.value.trim();
-  const date = dateEl.value;
-  if (!name || !date) {
-    alert('Please enter your name and choose a date.');
+  const selected = (fp && fp.selectedDates) ? fp.selectedDates.map(d => fp.formatDate(d, 'Y-m-d')) : [];
+  if ((!name && !(auth && auth.currentUser)) || selected.length === 0) {
+    alert('Please enter your name (or sign in) and choose one or more dates.');
     return;
   }
 
@@ -57,14 +57,16 @@ voteBtn.addEventListener('click', async () => {
   try {
     // if signed in, store by uid to enforce one vote per user
     const user = auth && auth.currentUser;
+    const payload = { name: (user && user.displayName) || name, dates: selected, ts: new Date() };
     if (user) {
-      await setDoc(doc(db, 'votes', user.uid), { name: user.displayName || name, date, ts: new Date(), uid: user.uid });
+      payload.uid = user.uid;
+      await setDoc(doc(db, 'votes', user.uid), payload);
     } else {
-      // anonymous: create auto-id doc
-      await addDoc(collection(db, 'votes'), { name, date, ts: new Date() });
+      // anonymous: create auto-id doc (will contain dates array)
+      await addDoc(collection(db, 'votes'), payload);
     }
     nameEl.value = '';
-    dateEl.value = '';
+    fp.clear();
   } catch (err) {
     console.error(err);
     alert('Failed to save vote: ' + err.message);
@@ -93,10 +95,18 @@ if (db) {
     snap.forEach(d => docs.push({ id: d.id, data: d.data() }));
 
     docs.forEach(({ id, data: v }) => {
-      if (!v.date) return;
-      groups[v.date] = groups[v.date] || [];
-      // store objects to allow remove/edit links for signed-in users
-      groups[v.date].push({ name: v.name || 'Anonymous', uid: v.uid || null, id });
+      // support legacy single-date field
+      if (v.date) {
+        groups[v.date] = groups[v.date] || [];
+        groups[v.date].push({ name: v.name || 'Anonymous', uid: v.uid || null, id });
+      }
+      // support new array of dates
+      if (Array.isArray(v.dates)) {
+        v.dates.forEach(d => {
+          groups[d] = groups[d] || [];
+          groups[d].push({ name: v.name || 'Anonymous', uid: v.uid || null, id });
+        });
+      }
     });
 
     // render list
