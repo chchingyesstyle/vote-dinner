@@ -18,7 +18,13 @@ const changeVoteBtn = document.getElementById('changeVote');
 const removeVoteBtn = document.getElementById('removeVote');
 
 // init flatpickr (multiple-date selection)
-const fp = flatpickr(dateEl, { mode: 'multiple', dateFormat: 'Y-m-d', minDate: 'today' });
+const fp = flatpickr(dateEl, {
+  mode: 'multiple',
+  dateFormat: 'Y-m-d',
+  minDate: 'today',
+  allowInput: false,
+  clickOpens: true
+});
 
 // Helper: GitHub API request
 async function ghRequest(path, method = 'GET', body = null) {
